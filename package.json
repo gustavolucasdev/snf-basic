@@ -1,0 +1,25 @@
+{
+  "name": "nf-gustavo",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "servidor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavolucasdev/snf-basic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gustavolucasdev/snf-basic/issues"
+  },
+  "homepage": "https://github.com/gustavolucasdev/snf-basic#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.4"
+  }
+}

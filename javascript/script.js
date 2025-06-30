@@ -91,6 +91,45 @@ class NotaFiscalSystem {
         document.getElementById('totalGeral').textContent = this.formatCurrency(total);
     }
 
+    async enviarNotaPorEmail(nota) {
+        const destinatario = nota.cliente?.email || nota.fornecedor?.email;
+        if (!destinatario) return;
+
+        try {
+            await fetch('http://localhost:3000/enviar-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: destinatario,
+                    assunto: `Nota Fiscal #${nota.numero}`,
+                    corpo: this.formatarNotaParaEmail(nota)
+                })
+            });
+
+            console.log('E-mail enviado com sucesso');
+        } catch (error) {
+            console.error('Erro ao enviar e-mail:', error);
+        }
+    }
+
+    formatarNotaParaEmail(nota) {
+        return `
+            Nota Fiscal #${nota.numero}
+            Tipo: ${this.getTipoOperacaoText(nota.tipoOperacao)}
+            Data: ${nota.data} - ${nota.hora}
+            ${nota.cliente ? `Cliente: ${nota.cliente.nome} - ${nota.cliente.email}` : ''}
+            ${nota.fornecedor ? `Fornecedor: ${nota.fornecedor.nome} - ${nota.fornecedor.email}` : ''}
+
+            Itens:
+            ${nota.itens.map(item => `- ${item.descricao} (${item.quantidade} x R$${item.valorUnitario.toFixed(2)}) = R$${item.valorTotal.toFixed(2)}`).join('\n')}
+
+            Valor Total: R$ ${nota.valorTotal.toFixed(2)}
+
+            ${nota.observacoes ? `Observações: ${nota.observacoes}` : ''}
+        `;
+    }
+
+
     handleSubmit(e) {
         e.preventDefault();
 
@@ -101,6 +140,7 @@ class NotaFiscalSystem {
         this.saveToStorage();
         this.updateNotasList();
         this.resetForm();
+        this.enviarNotaPorEmail(nota);
 
         alert('Nota fiscal gerada com sucesso!');
     }
@@ -316,7 +356,6 @@ class NotaFiscalSystem {
         window.print();
     }
 }
-
 
 let notaSystem;
 document.addEventListener('DOMContentLoaded', () => {
