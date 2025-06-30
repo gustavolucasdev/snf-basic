@@ -19,6 +19,7 @@
   "homepage": "https://github.com/gustavolucasdev/snf-basic#readme",
   "description": "",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
     "express": "^5.1.0",
     "nodemailer": "^7.0.4"
   }

@@ -1,31 +1,30 @@
-import nodemailer from 'nodemailer';
+import sendgrid from '@sendgrid/mail';
+
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
-        return res.status(405).end('Método não permitido');
+        return res.status(405).json({ error: 'Método não permitido' });
     }
 
     const { email, assunto, corpo } = req.body;
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'informaticagustavolucas@gmail.com',
-            pass: "a"
-        }
-    });
+    if (!email || !assunto || !corpo) {
+        return res.status(400).json({ error: 'Dados incompletos' });
+    }
 
     try {
-        await transporter.sendMail({
-            from: '"Gustavo Lucas Téc. Informática" <informaticagustavolucas@gmail.com>',
+        await sendgrid.send({
             to: email,
+            from: 'gustavolucasfcedro@gmail.com', // email verificado no SendGrid
             subject: assunto,
-            text: corpo
+            text: corpo,
+            // Se quiser enviar HTML, pode usar 'html: corpo' ao invés de text
         });
 
-        res.status(200).json({ message: 'Email enviado com sucesso' });
+        return res.status(200).json({ message: 'Email enviado com sucesso!' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao enviar o e-mail' });
+        console.error('Erro ao enviar email:', error);
+        return res.status(500).json({ error: 'Erro ao enviar email' });
     }
 }
