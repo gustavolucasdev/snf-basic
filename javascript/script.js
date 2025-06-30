@@ -108,7 +108,7 @@ class NotaFiscalSystem {
         try {
             console.log('Enviando e-mail para:', destinatario);
 
-            const response = await fetch('https://snf-basic.vercel.app/api/enviar-email', {
+            const response = await fetch('/api/enviar-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

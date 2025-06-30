@@ -18,7 +18,11 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Método não permitido' });
     }
 
+    console.log('=== INÍCIO DEBUG ===');
     console.log('Requisição recebida:', req.body);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('API Key existe:', !!process.env.SENDGRID_API_KEY);
+    console.log('API Key prefixo:', process.env.SENDGRID_API_KEY?.substring(0, 5));
 
     const { email, assunto, corpo } = req.body;
 
@@ -38,6 +42,7 @@ export default async function handler(req, res) {
     // Validar formato do email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+        console.error('Email inválido:', email);
         return res.status(400).json({ error: 'Formato de email inválido' });
     }
 
@@ -48,8 +53,10 @@ export default async function handler(req, res) {
     }
 
     try {
-        console.log('Tentando enviar email para:', email);
-        console.log('API Key configurada:', process.env.SENDGRID_API_KEY ? 'SIM' : 'NÃO');
+        console.log('Preparando email...');
+        console.log('Para:', email);
+        console.log('De:', 'informaticagustavolucas@gmail.com');
+        console.log('Assunto:', assunto);
 
         const msg = {
             to: email,
@@ -62,9 +69,15 @@ export default async function handler(req, res) {
             html: corpo.replace(/\n/g, '<br>')
         };
 
+        console.log('Objeto msg criado:', JSON.stringify(msg, null, 2));
+        console.log('Enviando email...');
+
         const result = await sgMail.send(msg);
 
-        console.log('Email enviado com sucesso:', result[0].statusCode);
+        console.log('Email enviado com sucesso!');
+        console.log('Status code:', result[0].statusCode);
+        console.log('Headers:', result[0].headers);
+
         return res.status(200).json({
             message: 'Email enviado com sucesso!',
             destinatario: email,
@@ -72,35 +85,50 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('Erro detalhado ao enviar email:', {
-            message: error.message,
-            code: error.code,
-            response: error.response?.body || error.response
-        });
+        console.error('=== ERRO DETALHADO ===');
+        console.error('Tipo do erro:', typeof error);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Error stack:', error.stack);
+
+        // Log completo da resposta do SendGrid
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+            console.error('Response body:', JSON.stringify(error.response.body, null, 2));
+        }
 
         // Tratamento de erros específicos do SendGrid
         if (error.code === 401) {
             return res.status(500).json({
-                error: 'Erro de autenticação SendGrid - Verifique a API Key'
+                error: 'Erro de autenticação SendGrid - Verifique a API Key',
+                debug: { code: error.code, message: error.message }
             });
         }
 
         if (error.code === 403) {
             return res.status(500).json({
-                error: 'Email remetente não verificado no SendGrid'
+                error: 'Email remetente não verificado no SendGrid',
+                debug: { code: error.code, message: error.message }
             });
         }
 
         if (error.code === 400) {
             return res.status(500).json({
                 error: 'Dados inválidos para o SendGrid',
-                details: error.response?.body?.errors || error.message
+                details: error.response?.body?.errors || error.message,
+                debug: { code: error.code, message: error.message }
             });
         }
 
         return res.status(500).json({
             error: 'Erro ao enviar email',
-            details: process.env.NODE_ENV === 'development' ? error.message : 'Erro interno do servidor'
+            details: error.message,
+            debug: {
+                code: error.code,
+                type: typeof error,
+                hasResponse: !!error.response
+            }
         });
     }
 }
