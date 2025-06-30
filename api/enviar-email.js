@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         service: 'gmail',
         auth: {
             user: 'informaticagustavolucas@gmail.com',
-            pass: '@Informaticagst184250'
+            pass: "a"
         }
     });
 
