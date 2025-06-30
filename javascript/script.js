@@ -96,7 +96,7 @@ class NotaFiscalSystem {
         if (!destinatario) return;
 
         try {
-            await fetch('http://localhost:3000/enviar-email', {
+            await fetch('https://geradordenf.vercel.app/api/enviar-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
