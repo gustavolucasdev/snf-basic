@@ -96,7 +96,7 @@ class NotaFiscalSystem {
         if (!destinatario) return;
 
         try {
-            await fetch('https://geradordenf.vercel.app/api/enviar-email', {
+            await fetch('https://snf-basic.vercel.app/api/enviar-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -105,6 +105,7 @@ class NotaFiscalSystem {
                     corpo: this.formatarNotaParaEmail(nota)
                 })
             });
+
 
             console.log('E-mail enviado com sucesso');
         } catch (error) {
