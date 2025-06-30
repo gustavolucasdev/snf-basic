@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     try {
         await sendgrid.send({
             to: email,
-            from: 'gustavolucasfcedro@gmail.com', // email verificado no SendGrid
+            from: 'informaticagustavolucas@gmail.com', // email verificado no SendGrid
             subject: assunto,
             text: corpo,
             // Se quiser enviar HTML, pode usar 'html: corpo' ao invés de text
