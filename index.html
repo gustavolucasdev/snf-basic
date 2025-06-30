@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas Fiscais</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Gustavo Lucas Téc. em Informática</h1>
+            <p>Sistema de Geração de Notas Fiscais</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Nova Nota Fiscal</h2>
+
+                <form id="notaForm">
+                    <div class="form-group">
+                        <label for="tipoOperacao">Tipo de Operação:</label>
+                        <select id="tipoOperacao" name="tipoOperacao" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="servico">Prestação de Serviço</option>
+                            <option value="venda">Venda de Produto</option>
+                            <option value="compra">Compra</option>
+                        </select>
+                    </div>
+
+                    <div id="clienteSection" class="pessoa-section" style="display: none;">
+                        <h3>Dados do Cliente</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nomeCliente">Nome do Cliente:</label>
+                                <input type="text" id="nomeCliente" name="nomeCliente"
+                                    placeholder="Nome completo do cliente">
+                            </div>
+                            <div class="form-group">
+                                <label for="emailCliente">Email do Cliente:</label>
+                                <input type="email" id="emailCliente" name="emailCliente"
+                                    placeholder="email@cliente.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="fornecedorSection" class="pessoa-section" style="display: none;">
+                        <h3>Dados do Fornecedor</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nomeFornecedor">Nome do Fornecedor:</label>
+                                <input type="text" id="nomeFornecedor" name="nomeFornecedor"
+                                    placeholder="Nome completo do fornecedor">
+                            </div>
+                            <div class="form-group">
+                                <label for="emailFornecedor">Email do Fornecedor:</label>
+                                <input type="email" id="emailFornecedor" name="emailFornecedor"
+                                    placeholder="email@fornecedor.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="itens-section">
+                        <h3>Itens/Serviços</h3>
+                        <div id="itensContainer">
+                        </div>
+                        <button type="button" id="addItem" class="btn-secondary">+ Adicionar Item</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes">Observações:</label>
+                        <textarea id="observacoes" name="observacoes" rows="3"
+                            placeholder="Observações adicionais (opcional)"></textarea>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-display">
+                            <strong>Total Geral: <span id="totalGeral">R$ 0,00</span></strong>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Gerar Nota Fiscal</button>
+                        <button type="button" class="btn-secondary" onclick="notaSystem.resetForm()">Limpar
+                            Formulário</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="lista-section">
+                <h2>Notas Fiscais Cadastradas</h2>
+                <div id="notasLista">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para visualizar nota fiscal -->
+    <div id="notaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes da Nota Fiscal</h2>
+                <span class="close" onclick="notaSystem.closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="notaContent">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="notaSystem.closeModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascript/script.js"></script>
+</body>
+
+</html>
