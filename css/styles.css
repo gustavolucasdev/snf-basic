@@ -472,6 +472,39 @@ table tr:hover {
     background: #5a67d8;
 }
 
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    html,
+    body {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .modal,
+    .modal * {
+        box-shadow: none !important;
+    }
+
+    .modal-content {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .nota-detail {
+        page-break-inside: avoid;
+    }
+}
+
+
 /* Responsividade */
 @media (max-width: 768px) {
     .container {

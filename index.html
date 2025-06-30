@@ -102,6 +102,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Detalhes da Nota Fiscal</h2>
+                <p>Gustavo Lucas Téc. em Informática</p>
                 <span class="close" onclick="notaSystem.closeModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -109,7 +110,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="notaSystem.closeModal()">Fechar</button>
+                <button class="btn-primary no-print" onclick="notaSystem.imprimirPagina()">Imprimir</button>
+                <button class="btn-secondary no-print" onclick="notaSystem.closeModal()">Fechar</button>
             </div>
         </div>
     </div>

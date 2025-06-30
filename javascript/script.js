@@ -171,7 +171,7 @@ class NotaFiscalSystem {
         container.innerHTML = this.notasFiscais.map(nota => `
             <div class="nota-item">
                 <div class="nota-header">
-                    <h3>Nota Fiscal #${nota.numero}</h3>
+                    <h3>Nota Fiscal #${nota.numero} - ${this.getTipoOperacaoText(nota.tipoOperacao)}</h3>
                     <div class="nota-actions">
                         <button onclick="notaSystem.viewNota(${nota.numero})" class="btn-view">Ver Detalhes</button>
                         <button onclick="notaSystem.deleteNota(${nota.numero})" class="btn-delete">Excluir</button>
@@ -311,7 +311,12 @@ class NotaFiscalSystem {
     closeModal() {
         document.getElementById('notaModal').style.display = 'none';
     }
+
+    imprimirPagina() {
+        window.print();
+    }
 }
+
 
 let notaSystem;
 document.addEventListener('DOMContentLoaded', () => {
