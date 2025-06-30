@@ -2,25 +2,32 @@
   "name": "nf-gustavo",
   "version": "1.0.0",
   "type": "module",
-  "main": "servidor.js",
   "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build completed'",
+    "start": "vercel --prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gustavolucasdev/snf-basic.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nota-fiscal",
+    "sendgrid",
+    "vercel"
+  ],
+  "author": "Gustavo Lucas",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gustavolucasdev/snf-basic/issues"
   },
   "homepage": "https://github.com/gustavolucasdev/snf-basic#readme",
-  "description": "",
+  "description": "Sistema de geração de notas fiscais com envio por email",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.5",
-    "express": "^5.1.0",
-    "nodemailer": "^7.0.4"
+    "@sendgrid/mail": "^8.1.5"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }

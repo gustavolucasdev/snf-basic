@@ -93,39 +93,118 @@ class NotaFiscalSystem {
 
     async enviarNotaPorEmail(nota) {
         const destinatario = nota.cliente?.email || nota.fornecedor?.email;
-        if (!destinatario) return;
+        if (!destinatario) {
+            console.log('Nenhum destinatário de e-mail encontrado');
+            return;
+        }
+
+        // Validar se o e-mail tem formato válido
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(destinatario)) {
+            console.error('E-mail inválido:', destinatario);
+            return;
+        }
 
         try {
-            await fetch('https://snf-basic.vercel.app/api/enviar-email', {
+            console.log('Enviando e-mail para:', destinatario);
+
+            const response = await fetch('https://snf-basic.vercel.app/api/enviar-email', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({
                     email: destinatario,
                     assunto: `Nota Fiscal #${nota.numero}`,
                     corpo: this.formatarNotaParaEmail(nota)
                 })
             });
-            console.log('E-mail enviado com sucesso');
+
+            // Verificar se a resposta foi bem-sucedida
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('E-mail enviado com sucesso:', result);
+
+            // Mostrar notificação de sucesso para o usuário
+            this.showNotification('E-mail enviado com sucesso!', 'success');
+
         } catch (error) {
-            console.error('Erro ao enviar e-mail:', error);
+            console.error('Erro ao enviar e-mail:', error.message);
+
+            // Mostrar notificação de erro para o usuário
+            this.showNotification('Erro ao enviar e-mail: ' + error.message, 'error');
+
+            // Opcional: Tentar novamente após um tempo
+            // setTimeout(() => this.enviarNotaPorEmail(nota), 5000);
         }
     }
 
+    showNotification(message, type = 'info') {
+        // Criar elemento de notificação
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        // Adicionar estilos inline se não houver CSS
+        notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        ${type === 'success' ? 'background-color: #4CAF50;' : ''}
+        ${type === 'error' ? 'background-color: #f44336;' : ''}
+        ${type === 'info' ? 'background-color: #2196F3;' : ''}
+    `;
+
+        document.body.appendChild(notification);
+
+        // Mostrar notificação
+        setTimeout(() => notification.style.opacity = '1', 100);
+
+        // Remover após 4 segundos
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 4000);
+    }
+
+
     formatarNotaParaEmail(nota) {
+        const tipoOperacao = this.getTipoOperacaoText(nota.tipoOperacao);
+        const clienteInfo = nota.cliente ?
+            `Cliente: ${nota.cliente.nome} - ${nota.cliente.email}` : '';
+        const fornecedorInfo = nota.fornecedor ?
+            `Fornecedor: ${nota.fornecedor.nome} - ${nota.fornecedor.email}` : '';
+
+        const itensTexto = nota.itens.map(item =>
+            `- ${item.descricao} (${item.quantidade} x ${this.formatCurrency(item.valorUnitario)}) = ${this.formatCurrency(item.valorTotal)}`
+        ).join('\n');
+
         return `
             Nota Fiscal #${nota.numero}
-            Tipo: ${this.getTipoOperacaoText(nota.tipoOperacao)}
+            Tipo: ${tipoOperacao}
             Data: ${nota.data} - ${nota.hora}
-            ${nota.cliente ? `Cliente: ${nota.cliente.nome} - ${nota.cliente.email}` : ''}
-            ${nota.fornecedor ? `Fornecedor: ${nota.fornecedor.nome} - ${nota.fornecedor.email}` : ''}
+            ${clienteInfo}
+            ${fornecedorInfo}
 
             Itens:
-            ${nota.itens.map(item => `- ${item.descricao} (${item.quantidade} x R$${item.valorUnitario.toFixed(2)}) = R$${item.valorTotal.toFixed(2)}`).join('\n')}
+            ${itensTexto}
 
-            Valor Total: R$ ${nota.valorTotal.toFixed(2)}
+            Valor Total: ${this.formatCurrency(nota.valorTotal)}
 
             ${nota.observacoes ? `Observações: ${nota.observacoes}` : ''}
-        `;
+        `.trim();
     }
 
 
