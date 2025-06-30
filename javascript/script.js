@@ -144,6 +144,7 @@ class NotaFiscalSystem {
         }
     }
 
+    // Método auxiliar para mostrar notificações
     showNotification(message, type = 'info') {
         // Criar elemento de notificação
         const notification = document.createElement('div');
@@ -179,7 +180,7 @@ class NotaFiscalSystem {
         }, 4000);
     }
 
-
+    // Método formatarNotaParaEmail também pode ser melhorado
     formatarNotaParaEmail(nota) {
         const tipoOperacao = this.getTipoOperacaoText(nota.tipoOperacao);
         const clienteInfo = nota.cliente ?
@@ -192,19 +193,19 @@ class NotaFiscalSystem {
         ).join('\n');
 
         return `
-            Nota Fiscal #${nota.numero}
-            Tipo: ${tipoOperacao}
-            Data: ${nota.data} - ${nota.hora}
-            ${clienteInfo}
-            ${fornecedorInfo}
+Nota Fiscal #${nota.numero}
+Tipo: ${tipoOperacao}
+Data: ${nota.data} - ${nota.hora}
+${clienteInfo}
+${fornecedorInfo}
 
-            Itens:
-            ${itensTexto}
+Itens:
+${itensTexto}
 
-            Valor Total: ${this.formatCurrency(nota.valorTotal)}
+Valor Total: ${this.formatCurrency(nota.valorTotal)}
 
-            ${nota.observacoes ? `Observações: ${nota.observacoes}` : ''}
-        `.trim();
+${nota.observacoes ? `Observações: ${nota.observacoes}` : ''}
+    `.trim();
     }
 
 
